@@ -1,0 +1,38 @@
+ Name, Section, Title of application
+- List of user functionality
+- Reasoning for design choices
+- Brief description of above and beyond features 
+- Requirements not completed
+
+T.J. Tarazevits 
+IGME 202 Section 2
+
+Asteroids
+
+List of User Functionality
+-w to accelerate
+-s to decelerate
+-a and d to rotate
+-spacebar to fire bullets
+-Enter to start the game
+-e to see controls
+-In game controls menu
+
+Reasoning behind design choices
+The game features minimalistic graphics to represent older arcade games
+The asteroids are randomly colored to provide a more retro look. I also
+didn't like the pure white on black look.
+
+
+
+Brief description of above and beyond features
+The game features drift just like classic asteroids. It also has a Finite State Machine
+powering the game menu system. I also used an array to track key input to allow
+multiple keys to be pressed simultaneously. I wrote a Quadtree class to optimize
+collision detection but Processing deleted it and I didn't want to redo 2 hours 
+of work. 
+
+Requirements not completed
+Ship does not decelerate without user input. This allows for drifting motion.
+User can decelerate the ship by pressing 's'. Assignment was turned in 1 day late
+but I am using a grace day.

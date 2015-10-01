@@ -1,0 +1,47 @@
+name name of file
+section
+user functionality
+explain how i fulfilled requirements
+design decisions
+above and beyond
+failed requirements
+
+T.J. Tarazevirs IGME 202.02
+
+User Functionality:
+Press 'c' to spawn a cloud at the bottom of the screen
+Press 'w' to speed up the clouds
+Press 's' tp slow down the clouds
+
+Fulfilled Requirements:
+The scene contains a raft moving down a river
+The raft has 6 animated oars
+
+The river moves up the screen giving a sense of movement
+The raft moves with the river according to the noise function
+
+The shape of the river is generated with a perlin noise function
+The birds move downwards with directed randomness
+The clouds are made of randomized circles with a randomized relative positions
+Birds spawn at the top of the screen according to a gaussian distribution
+
+Design Decisions:
+The raft is animated using 6 oars, 3 on each side.
+I used perlin noise to create a unique river for the raft to paddle down.
+The program includes multiple clsses in which the raft, birds, and clouds are separated. 
+The river class displays the river as well as the birds and clouds
+The main class is minimal, only initializing the river and raft and calling display on raft and river during
+each draw call
+
+Above and Beyond:
+I added user input to the program. Cloud speed can be controlled  within predefined limits.
+I also created a FIFO(First In First Out) data structure using ArrayList. This allowed me to add a new bottom row
+of river and remove the top row once it scrolls off the top of the screen. This limits memory usuage during river 
+generation
+
+Failed Requirements:
+Main issue is that the raft sometimes clip through the shore. This is because the actual river is created
+using lines extending out from the center line. Therefore I couldn't constrain the raft inside the river using
+the river's width. I instead used the same time and timestep values for the raft's position. Because I didn't want
+to offset it to either the left or right side of the centerline, I offset it from the far left border into the middle.
+It generally follows the flow of the river while occassionally clipping.
