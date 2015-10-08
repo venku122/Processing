@@ -37,7 +37,12 @@ class Seeker extends Vehicle {
 
     //PShape initialization
     //draw the seeker "pointing" toward 0 degrees
-    body= createShape(RECT, 0,0,10,50);
+     body = createShape();
+    body.beginShape();
+    body.vertex(10, 0);
+    body.vertex(-10, -5);
+    body.vertex(-10, 5);
+    body.endShape(CLOSE);
   }
 
 
@@ -58,9 +63,13 @@ class Seeker extends Vehicle {
 
     //add the above seeking force to this overall steering force
     steeringForce.add(force);
+    for(int i=0;i<obstacles.length;i++)
+    {
+      steeringForce.add(avoidObstacle(obstacles[i], safeDistance));
+    }
 
     //limit this seeker's steering force to a maximum force
-    steeringForce.setMag(maxForce);
+    steeringForce.limit(maxForce);
 
     //apply this steering force to the vehicle's acceleration
     applyForce(steeringForce);
@@ -83,9 +92,8 @@ class Seeker extends Vehicle {
     //draw this vehicle's body PShape using proper translation and rotation
     pushMatrix();
     translate(position.x, position.y);
-    println(position+radians(90));
-    rotate(radians(angle));
-     shape(body);
+    rotate(angle);
+    shape(body,0,0);
     popMatrix();
   }
 
