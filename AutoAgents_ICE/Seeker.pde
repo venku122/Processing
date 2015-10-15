@@ -63,9 +63,9 @@ class Seeker extends Vehicle {
 
     //add the above seeking force to this overall steering force
     steeringForce.add(force);
-    for(int i=0;i<obstacles.length;i++)
+    for(int i=0;i<obstacles.size();i++)
     {
-      steeringForce.add(avoidObstacle(obstacles[i], safeDistance));
+      steeringForce.add(avoidObstacle(obstacles.get(i), safeDistance));
     }
 
     //limit this seeker's steering force to a maximum force

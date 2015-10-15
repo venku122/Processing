@@ -44,6 +44,8 @@ abstract class Vehicle {
     acceleration=new PVector(0, 0);
     velocity = new PVector(0, 0);
     force = new PVector(0, 0);
+    forward= new PVector(0,0);
+    right = new PVector(0,0);
     println("position: " + position);
   }
 
@@ -71,13 +73,19 @@ abstract class Vehicle {
     position.add(velocity);//Updates position
 
     //calculate forward and right vectors
-    forward= velocity.copy().normalize();
-    right= forward.copy().rotate(radians(90));
+    forward = velocity.copy().normalize();
+    right = forward.copy().rotate(radians(90));
 
+    println("forward: "+forward+" right: "+right);
     //reset acceleration
+
+    stroke(255, 0, 0);
+    line(position.x, position.y, position.x+(forward.x*100), position.y+(forward.y*100));
+    stroke(0, 255, 0);
+    line(position.x, position.y, position.x+(right.x*100), position.y+(right.y*100));
+
     acceleration.mult(0);
     force.mult(0);
-    
   }
 
 
@@ -110,7 +118,8 @@ abstract class Vehicle {
     // Create vecToCenter - a vector from the character
     //to the center of the obstacle
     PVector vectToCenter = position.copy();
-     vectToCenter.sub(obst.position);
+    //vectToCenter.sub(obst.position);
+    vectToCenter=obst.position.copy().sub(vectToCenter);
     // Find the distance to the obstacle
     float distance= vectToCenter.mag();
     // Return a zero vector if the obstacle is too far
@@ -123,7 +132,7 @@ abstract class Vehicle {
 
     // Return a zero vector if the obstacle is behind us
     // (dot product of vecToCenter and forward is negative)
-    if (vectToCenter.dot(forward)<0)
+    if (vectToCenter.copy().dot(forward)<0)
     {
       return new PVector(0, 0);
     }
@@ -131,7 +140,7 @@ abstract class Vehicle {
     //(vecToCenter) and the unit vector
     // to the right (right) of the vehicle to find the distance 
     //between the centers of the vehicle and the obstacle 
-    distance=vectToCenter.dot(right);
+    distance=vectToCenter.copy().dot(right);
 
     // Compare this to the sum of the radii and return a zero vector
     //if we can pass safely
@@ -144,12 +153,11 @@ abstract class Vehicle {
     // Use the sign of the dot product between the vector to center 
     //(vecToCenter) and the      //   vector to the right (right) to
     //determine whether to steer left or right
-    PVector desiredVelocity = new PVector(0,0);
+    PVector desiredVelocity = new PVector(0, 0);
     if (distance>0)
     {
       desiredVelocity = right.mult(-maxVelocity);
-    }
-    if (distance<0)
+    } else if (distance<0)
     {
       desiredVelocity = right.mult(maxVelocity);
     }
@@ -160,7 +168,8 @@ abstract class Vehicle {
     //to desired velocity Consider multiplying this force by
     //safeDistance/dist to increase the relative weight // 
     //of the steering force when obstacles are closer.
-
+    stroke(0, 0, 255);
+    line(position.x, position.y, position.x+vectToCenter.x, position.y+vectToCenter.y);
     return steer;
   }
 }
