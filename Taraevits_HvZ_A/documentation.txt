@@ -1,0 +1,30 @@
+*** DOCUMENTATION FILE SPECIFICATIONS ***
+
+Documentation files should include the following:
+
+- Name, Section, Title of application
+- List of user functionality
+- Reasoning for design choices
+- Brief description of above and beyond features 
+- Requirements not completed
+
+*** EXAMPLE DOCUMENTATION FILE ***
+
+T.J. Tarazevits
+IGME 202 Section 2
+
+Humans vs Zombies A
+
+List of user functionality:
+- Click the red square in the upper left corner to toggle debugging.
+
+Reasoning behind design choices:
+I chose triangles to provide a clear orientation for the characters. Zombies are green to represent their supernatural status.
+
+Brief description of above and beyond features:
+N/A 
+
+Requirements not completed:
+
+
+Note to grader:  I am using one grace day for this assignment.  (I now have 1 grace days left.)
