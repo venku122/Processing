@@ -73,6 +73,9 @@ class Human extends Vehicle
 
       //reset the steering force to 0
       steeringForce.mult(0);
+    } else
+    {
+      applyForce(wander(10, (int)radius));
     }
     avoidBorder(100);
   }
@@ -100,7 +103,7 @@ class Human extends Vehicle
 
   boolean checkCollision()
   {
-    
+
     if (z!=null)
     {
       PVector distance = PVector.sub(z.position.copy(), position.copy());

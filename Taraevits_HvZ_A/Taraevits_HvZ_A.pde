@@ -44,12 +44,20 @@ void setup() {
 
 void draw() {
   background(255);
+  rect(50, 30, 100, 60);
+  if (mousePressed && mouseX>50&&mouseX<150&&mouseY>30&&mouseY<90&&frameCount%10==0)
+  {
+    for (int i=0; i<zombies.size(); i++)
+    {
+      zombies.get(i).debug=!zombies.get(i).debug;
+    }
+    for (int i=0; i<humans.size(); i++)
+    {
+      humans.get(i).debug=!humans.get(i).debug;
+    }
+  }
 
-  // Draw an ellipse at the mouse location
-  fill(0, 255, 0);
-  ellipse(mouseX, mouseY, 50, 50);
 
-  //update the seeker - done for you
   for (int i =0; i<zombies.size(); i++)
   {
     zombies.get(i).getClosest(humans);

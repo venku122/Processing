@@ -71,6 +71,10 @@ class Zombie extends Vehicle
       applyForce(steeringForce);
       //reset the steering force to 0
       steeringForce.mult(0);
+    } else
+    {
+      applyForce(wander(10, (int)radius));
+      println("wander");
     }
 
     avoidBorder(100);

@@ -117,6 +117,29 @@ abstract class Vehicle {
     steeringForce.limit(maxForce);
     return steeringForce;
   }
+  
+  PVector pursue(Vehicle v, int frames)
+  {
+    PVector target = v.position.copy().add(velocity.copy().mult(frames));
+    return seek(target);
+  }
+  
+  PVector evade(Vehicle v, int frames)
+  {
+    PVector target = v.position.copy().add(velocity.copy().mult(frames));
+    return flee(target);
+  }
+  
+  PVector wander(int frames, int radius)
+  {
+    PVector center = position.copy().add(velocity.copy().mult(frames));
+    int direction = (int)random(0, 360);
+    PVector vectToTarget = PVector.fromAngle(radians(direction));
+    vectToTarget.setMag(radius);
+    PVector target = center.copy().add(vectToTarget);
+    return seek(target);
+    
+  }
 
   PVector flee(PVector target)
   {
