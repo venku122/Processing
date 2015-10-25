@@ -78,7 +78,6 @@ abstract class Vehicle {
     forward = velocity.copy().normalize();
     right = forward.copy().rotate(radians(90));
 
-    //println("forward: "+forward+" right: "+right);
     //reset acceleration
 
     if (debug)
@@ -117,19 +116,29 @@ abstract class Vehicle {
     steeringForce.limit(maxForce);
     return steeringForce;
   }
-  
+
   PVector pursue(Vehicle v, int frames)
   {
     PVector target = v.position.copy().add(velocity.copy().mult(frames));
+    if (debug)
+    {
+      fill(0, 255, 0);
+      ellipse(target.x, target.y, radius, radius);
+    }
     return seek(target);
   }
-  
+
   PVector evade(Vehicle v, int frames)
   {
     PVector target = v.position.copy().add(velocity.copy().mult(frames));
+    if (debug)
+    {
+      fill(0, 255, 0);
+      ellipse(target.x, target.y, radius, radius);
+    }
     return flee(target);
   }
-  
+
   PVector wander(int frames, int radius)
   {
     PVector center = position.copy().add(velocity.copy().mult(frames));
@@ -138,7 +147,6 @@ abstract class Vehicle {
     vectToTarget.setMag(radius);
     PVector target = center.copy().add(vectToTarget);
     return seek(target);
-    
   }
 
   PVector flee(PVector target)
@@ -227,14 +235,19 @@ abstract class Vehicle {
       desiredVelocity = right.mult(maxVelocity);
     }
     steer=PVector.sub(desiredVelocity, velocity);
+    steer.mult(safeDistance/distance);
+  
     //steer.mult(distance);
     // For each case calculate desired velocity using the right vector
     //and maxSpeed Compute the force required to change current velocity
     //to desired velocity Consider multiplying this force by
     //safeDistance/dist to increase the relative weight // 
     //of the steering force when obstacles are closer.
-    stroke(0, 0, 255);
-    line(position.x, position.y, position.x+vectToCenter.x, position.y+vectToCenter.y);
+    if (debug)
+    {
+      stroke(0, 0, 255);
+      line(position.x, position.y, position.x+vectToCenter.x, position.y+vectToCenter.y);
+    }
     return steer;
   }
 }

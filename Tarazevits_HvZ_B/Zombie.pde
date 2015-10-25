@@ -6,6 +6,8 @@ class Zombie extends Vehicle
 
   //PShape to draw this seeker object
   PShape body;
+  
+  PShape z;
 
   //overall steering force for this Seeker accumulates the steering forces
   //  of which this will be applied to the vehicle's acceleration
@@ -36,6 +38,8 @@ class Zombie extends Vehicle
     body.vertex(-radius*2, radius);
     body.endShape(CLOSE);
     body.setFill(color(0, 255, 0));
+    
+    z=loadShape("zombie1.svg");
   }
 
 
@@ -55,7 +59,7 @@ class Zombie extends Vehicle
 
     if (h!=null)
     {
-      PVector force = seek(h.position.copy());
+      PVector force = pursue(h, 10);
 
       //add the above seeking force to this overall steering force
       steeringForce.add(force);
@@ -74,7 +78,10 @@ class Zombie extends Vehicle
     } else
     {
       applyForce(wander(10, (int)radius));
-      println("wander");
+      if (debug)
+      {
+        println("wander");
+      }
     }
 
     avoidBorder(100);
@@ -95,15 +102,23 @@ class Zombie extends Vehicle
   void display() {
 
     //calculate the direction of the current velocity - this is done for you
-    float angle = velocity.heading();  
+    float angle = velocity.heading()+radians(90);  
     fill(255, 0, 0);
 
     //draw this vehicle's body PShape using proper translation and rotation
+    shapeMode(CENTER);
     pushMatrix();
     translate(position.x, position.y);
     rotate(angle);
-    shape(body, 0, 0);
+    scale(.3);
+    shape(z, 0, 0);
+    //shape(body, 0, 0);
     popMatrix();
+    
+    if(debug)
+    {
+     ellipse(position.x, position.y, radius, radius); 
+    }
   }
 
   void getClosest(ArrayList<Human> hs)

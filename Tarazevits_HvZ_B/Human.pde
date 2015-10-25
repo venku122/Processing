@@ -13,12 +13,14 @@ class Human extends Vehicle
 
   Zombie z=null;
 
+  PImage[] animation;
+
 
   //---------------------------------------
   //Constructor
   //Seeker(x position, y position, radius, max speed, max force)
   //---------------------------------------
-  Human(float x, float y, float r, float ms, float mf)
+  Human(float x, float y, float r, float ms, float mf, PImage[] animation)
   {
     super(x, y, r, ms, mf);
     //call the super class' constructor and pass in necessary arguments
@@ -36,6 +38,7 @@ class Human extends Vehicle
     body.vertex(-radius*2, radius);
     body.endShape(CLOSE);
     body.setFill(color(128, 128, 128));
+    this.animation=animation;
   }
 
 
@@ -52,11 +55,14 @@ class Human extends Vehicle
 
     //get the steering force returned from calling seek
     //This seeker's target (for now) is the mouse
-    println("position: " + position);
+    if (debug)
+    {
+      println("position: " + position);
+    }
     if (z!=null)
     {
       //PVector force = flee(new PVector(width/2, height/2));
-      PVector force = flee(z.position.copy());
+      PVector force = evade(z, 10);
 
       //add the above seeking force to this overall steering force
       steeringForce.add(force);
@@ -93,11 +99,19 @@ class Human extends Vehicle
 
     //draw this vehicle's body PShape using proper translation and rotation
     pushMatrix();
-    println(position);
+
     translate(position.x, position.y);
     rotate(angle);
-    shape(body, 0, 0);
+    scale(.2);
+    int frame = (frameCount%40)/2;
+    imageMode(CENTER);
+    image(animation[frame], 0, 0);
     popMatrix();
+    if (debug)
+    {
+      ellipse(position.x, position.y, radius, radius);
+      println(position);
+    }
   }
 
 

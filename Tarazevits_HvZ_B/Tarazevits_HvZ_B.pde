@@ -9,6 +9,8 @@ public ArrayList<Obstacle> obstacles;
 
 ArrayList<Zombie> zombies;
 ArrayList<Human> humans;
+PImage[] humanAnimation = new PImage[20];
+Menu ui;
 
 void setup() {
   size(1000, 1000);
@@ -16,46 +18,35 @@ void setup() {
   obstacles= new ArrayList<Obstacle>();
   zombies = new ArrayList<Zombie>();
   humans = new ArrayList<Human>();
-  /*
-    zombies.add(z);
-   humans.add(h);
-   
-   h.z=z;
-   z.h=h;
-   */
+
+  ui = new Menu(obstacles, zombies, humans);
+  for (int i=0; i<20; i++)
+  {
+    PImage x = loadImage("human/survivor-move_knife_"+i+".png");
+    humanAnimation[i]=x;
+  }
 
   for (int i=0; i<10; i++)
   {
-    h = new Human((int)random(width), (int)random(height), 10, 4, 0.2);
+    h = new Human((int)random(width), (int)random(height), 30, 4, 0.2, humanAnimation);
     humans.add(h);
   }
 
   for (int i = 0; i<1; i++)
   {
-    z = new Zombie(500, 500, 20, 6, 0.1);
+    z = new Zombie(500, 500, 40, 6, 0.1);
     zombies.add(z);
   }
 
   for (int i=0; i<10; i++)
   {
-    obstacles.add(new Obstacle((int)random(width), (int)random(height), 50));
+    //obstacles.add(new Obstacle((int)random(width), (int)random(height), 50));
   }
 }
 
 void draw() {
   background(255);
-  rect(50, 30, 100, 60);
-  if (mousePressed && mouseX>50&&mouseX<150&&mouseY>30&&mouseY<90&&frameCount%10==0)
-  {
-    for (int i=0; i<zombies.size(); i++)
-    {
-      zombies.get(i).debug=!zombies.get(i).debug;
-    }
-    for (int i=0; i<humans.size(); i++)
-    {
-      humans.get(i).debug=!humans.get(i).debug;
-    }
-  }
+
 
 
   for (int i =0; i<zombies.size(); i++)
@@ -72,7 +63,8 @@ void draw() {
     humans.get(i).display();
     if (humans.get(i).checkCollision())
     {
-      Zombie x = new Zombie(humans.get(i).position.x, humans.get(i).position.y, 20, 4, 0.2);
+      Zombie x = new Zombie(humans.get(i).position.x, humans.get(i).position.y, 40, 4, 0.2);
+      x.debug=humans.get(i).debug;
       zombies.add(x);
       humans.remove(i);
     }
@@ -84,4 +76,7 @@ void draw() {
   {
     obstacles.get(i).display();
   }
+  
+  ui.update();
+  ui.display();
 }
