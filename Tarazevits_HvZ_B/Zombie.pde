@@ -6,7 +6,7 @@ class Zombie extends Vehicle
 
   //PShape to draw this seeker object
   PShape body;
-  
+
   PShape z;
 
   //overall steering force for this Seeker accumulates the steering forces
@@ -14,6 +14,8 @@ class Zombie extends Vehicle
   PVector steeringForce;
 
   Human h;
+
+  PImage sprite;
 
 
   //---------------------------------------
@@ -29,17 +31,9 @@ class Zombie extends Vehicle
     //instantiate steeringForce vector to (0, 0)
     steeringForce= new PVector(0, 0);
 
-    //PShape initialization
-    //draw the seeker "pointing" toward 0 degrees
-    body = createShape();
-    body.beginShape();
-    body.vertex(radius*2, 0);
-    body.vertex(-radius*2, -radius);
-    body.vertex(-radius*2, radius);
-    body.endShape(CLOSE);
-    body.setFill(color(0, 255, 0));
-    
+
     z=loadShape("zombie1.svg");
+    sprite=loadImage("zombie3.png");
   }
 
 
@@ -62,10 +56,11 @@ class Zombie extends Vehicle
       PVector force = pursue(h, 10);
 
       //add the above seeking force to this overall steering force
-      steeringForce.add(force);
+      force.limit(maxForce);
+      steeringForce.add(force.mult(0.4));
       for (int i=0; i<obstacles.size(); i++)
       {
-        steeringForce.add(avoidObstacle(obstacles.get(i), safeDistance));
+        steeringForce.add(avoidObstacle(obstacles.get(i), safeDistance).mult(1.2));
       }
 
       //limit this seeker's steering force to a maximum force
@@ -77,14 +72,14 @@ class Zombie extends Vehicle
       steeringForce.mult(0);
     } else
     {
-      applyForce(wander(10, (int)radius));
+      applyForce((wander(10, (int)radius).mult(.5)));
       if (debug)
       {
         println("wander");
       }
     }
 
-    avoidBorder(100);
+    applyForce(avoidBorder(150).limit(maxForce));
   }
   PVector seek(PVector target)
   {
@@ -109,15 +104,20 @@ class Zombie extends Vehicle
     shapeMode(CENTER);
     pushMatrix();
     translate(position.x, position.y);
+
     rotate(angle);
-    scale(.3);
-    shape(z, 0, 0);
-    //shape(body, 0, 0);
+    /*
+    noStroke();
+     smooth();
+     scale(.3);
+     shape(z, 0, 0);
+     */
+    image(sprite, 0, 0);
     popMatrix();
-    
-    if(debug)
+
+    if (debug)
     {
-     ellipse(position.x, position.y, radius, radius); 
+      ellipse(position.x, position.y, radius, radius);
     }
   }
 

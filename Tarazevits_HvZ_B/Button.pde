@@ -1,8 +1,12 @@
+//Creates clickable buttons for the UI handler
 class Button
 {
   PVector position, size, rightBound;
   String buttonText;
   color buttonColor;
+  
+  //Creates a button at the designated position with the defined dimensions, color,
+  //and button text
   Button(int x, int y, int w, int h, color c, String text)
   {
     position= new PVector(x, y);
@@ -24,6 +28,7 @@ class Button
     }
   }
 
+//Checks if mouse is inside the button
   boolean isClicked()
   {
     if (mouseX>position.x&&mouseX<rightBound.x&&mouseY>position.y &&mouseY<rightBound.y)

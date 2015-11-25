@@ -9,7 +9,8 @@ class Obstacle
   {
     
     sprite = loadImage("treeSmall.png");
-    size = new PVector(sprite.width, sprite.height);
+    size = new PVector(sprite.width+10, sprite.height+10);
+    radius=size.x;
     position=new PVector(x,y);
     debug=false;
   

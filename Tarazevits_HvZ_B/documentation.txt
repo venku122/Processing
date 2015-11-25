@@ -1,30 +1,45 @@
-*** DOCUMENTATION FILE SPECIFICATIONS ***
-
-Documentation files should include the following:
-
-- Name, Section, Title of application
-- List of user functionality
-- Reasoning for design choices
-- Brief description of above and beyond features 
-- Requirements not completed
-
-*** EXAMPLE DOCUMENTATION FILE ***
-
 T.J. Tarazevits
 IGME 202 Section 2
 
-Humans vs Zombies A
+Humans vs Zombies B
 
 List of user functionality:
-- Click the red square in the upper left corner to toggle debugging.
+- Upper screen features interaction menu
+--Debug: displays debug information
+--Spawn Human: creates a new Human in a random location on the screen
+--Spawn Zombie: creates a new Zombie in a random location on the screen
+--Increase Human MaxSpeed: Increases the maximum velocity of humans, allowing them to escape zombies better
+--Decrease Human MaxSpeed: Decreases the maximum velocity of humans, allowing zombies to catch them
+--Sim++: Increases simulation speed
+--Sim--: Decreases simulation speed; limited at 1 fps
 
 Reasoning behind design choices:
-I chose triangles to provide a clear orientation for the characters. Zombies are green to represent their supernatural status.
+I created a Menu object to display the UI elements. It has an ArrayList of Buttons that it displays. This allowed
+me to separate the display code and click checking of buttons in the Button class and include button interaction
+in the menu class. 
+
+I created a PImage array to allow for a moving animation for the humans. This array is initalized at runtime and
+ passed to new instances of Humans so that the images only have to be loaded once at startup.
+
+I am using the Java2D renderer because the default Processing renderer gave poor performance with the number of PImages
+and Text I wanted to use.
+
+Zombies are not animated because I coud not find an easy sprite set for them. Also I was using a .svg for the zombie but
+rendering performance was unacceptable. Current implementation uses a .jpg but doesn't rotate well.
 
 Brief description of above and beyond features:
-N/A 
+Simulation can be slowed down or sped up using UI buttons. Zombies and humans can be spawned at will using the appropriate
+UI buttons. Human maxVelocity can be modified to shift the advantage to the human or zombie side. 
+
+Debug Mode: Collision circles represented by red circles. Right Vector represented by green line, Forward vector represented
+by red line. Blue circle represents wander target. Blue line represents obstacle being avoided. Green line represents line to
+current target. Green circle represents pursue and evade target position.
+
+Assets
+Zombies: http://opengameart.org/content/zombie-rpg-sprites
+Humans: http://unluckystudio.com/free-top-down-shooterplayer-sprites/
+Trees: http://kenney.nl/assets/topdown-tanks
 
 Requirements not completed:
 
-
-Note to grader:  I am using one grace day for this assignment.  (I now have 1 grace days left.)
+Vehicles sometimes get stuck when two obstacles are close together in front of the vehicle.

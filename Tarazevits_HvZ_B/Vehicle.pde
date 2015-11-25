@@ -133,19 +133,30 @@ abstract class Vehicle {
     PVector target = v.position.copy().add(velocity.copy().mult(frames));
     if (debug)
     {
+      PVector vecToTarget=PVector.sub(target,position);
+      PVector vecToTarget2 = PVector.mult(vecToTarget, -1);
+      PVector target2= PVector.add(position, vecToTarget2);
       fill(0, 255, 0);
-      ellipse(target.x, target.y, radius, radius);
+      ellipse(target2.x, target2.y, radius, radius);
     }
     return flee(target);
   }
 
   PVector wander(int frames, int radius)
   {
+    
     PVector center = position.copy().add(velocity.copy().mult(frames));
     int direction = (int)random(0, 360);
     PVector vectToTarget = PVector.fromAngle(radians(direction));
     vectToTarget.setMag(radius);
     PVector target = center.copy().add(vectToTarget);
+    
+    if(debug)
+    {
+      fill(0,0,255);
+     line(position.x, position.y, target.x, target.y); 
+     ellipse(target.x, target.y, radius/2, radius/2);
+    }
     return seek(target);
   }
 
@@ -168,86 +179,98 @@ abstract class Vehicle {
       return steeringForce;
     }
   }
-  void avoidBorder(int distance)
+  PVector avoidBorder(int distance)
   {
     if (position.x > width-distance)
     {
-      applyForce(seek(new PVector(width-distance, position.y)).mult(2));
+      return seek(new PVector(width-distance, position.y)).mult(2);
     } else if (position.x < distance)
     {
-      applyForce(seek(new PVector(distance, position.y)).mult(2));
+      return seek(new PVector(distance, position.y)).mult(2);
     } else if (position.y > height-distance)
     {
-      applyForce(seek(new PVector(position.x, height-distance)).mult(2));
+      return seek(new PVector(position.x, height-distance)).mult(2);
     } else if (position.y < distance)
     {
-      applyForce(seek(new PVector(position.x, distance)).mult(2));
+      return seek(new PVector(position.x, distance)).mult(2);
     }
+    else{return new PVector(0,0);}
   }
 
   PVector avoidObstacle (Obstacle obst, float safeDistance)
   {
+    
     PVector steer = new PVector(0, 0);
-    // Create vecToCenter - a vector from the character
-    //to the center of the obstacle
-    PVector vectToCenter = position.copy();
-    //vectToCenter.sub(obst.position);
-    vectToCenter=obst.position.copy().sub(vectToCenter);
-    // Find the distance to the obstacle
-    float distance= vectToCenter.mag();
-    // Return a zero vector if the obstacle is too far
-    //to concern us Use safe distance to determine how large
-    //the “safe zone” is 
-    if (distance-(obst.size.x+radius)>safeDistance)
-    {
-      return new PVector(0, 0);
-    }
+    
+     // Create vecToCenter - a vector from the character
+     //to the center of the obstacle
+     PVector vectToCenter = PVector.sub(obst.position, position);
+     
+     // Find the distance to the obstacle
+     float distance= vectToCenter.copy().mag();
+     
+     // Return a zero vector if the obstacle is too far
+     //to concern us Use safe distance to determine how large
+     //the “safe zone” is 
+     if (distance-(obst.radius+radius)>safeDistance)
+     {
+     return new PVector(0, 0);
+     }
+     
+     // Return a zero vector if the obstacle is behind us
+     // (dot product of vecToCenter and forward is negative)
+     if (vectToCenter.copy().dot(forward)<0)
+     {
+     return new PVector(0, 0);
+     }
+     // Use the dot product of the vector to obstacle center
+     //(vecToCenter) and the unit vector
+     // to the right (right) of the vehicle to find the distance 
+     //between the centers of the vehicle and the obstacle 
+     distance=vectToCenter.copy().dot(right);
+     
+     // Compare this to the sum of the radii and return a zero vector
+     //if we can pass safely
+     if (distance>radius+obst.radius)
+     {
+     return new PVector(0, 0);
+     }
+     
+     // If we get this far we are on a collision course and must steer away! 
+     // Use the sign of the dot product between the vector to center 
+     //(vecToCenter) and the
+     //vector to the right (right) to
+     //determine whether to steer left or right
+     PVector desiredVelocity = new PVector(0, 0);
+     if (distance>0)
+     {
+       PVector left = right.copy().rotate(radians(180));
+     desiredVelocity = left.mult(maxVelocity);
+     } else
+     {
+     desiredVelocity = right.copy().mult(maxVelocity);
+     }
+     steer=PVector.sub(desiredVelocity, velocity);
+     steer.mult(safeDistance/vectToCenter.copy().mag());
+     
+     //steer.mult(distance);
+     // For each case calculate desired velocity using the right vector
+     //and maxSpeed Compute the force required to change current velocity
+     //to desired velocity Consider multiplying this force by
+     //safeDistance/dist to increase the relative weight // 
+     //of the steering force when obstacles are closer.
+     if (debug)
+     {
+     stroke(0, 0, 255);
+     line(position.x, position.y, position.x+vectToCenter.x, position.y+vectToCenter.y);
+     println("avoid");
+     }
+     return steer;
+     
 
-    // Return a zero vector if the obstacle is behind us
-    // (dot product of vecToCenter and forward is negative)
-    if (vectToCenter.copy().dot(forward)<0)
-    {
-      return new PVector(0, 0);
-    }
-    // Use the dot product of the vector to obstacle center
-    //(vecToCenter) and the unit vector
-    // to the right (right) of the vehicle to find the distance 
-    //between the centers of the vehicle and the obstacle 
-    distance=vectToCenter.copy().dot(right);
 
-    // Compare this to the sum of the radii and return a zero vector
-    //if we can pass safely
-    if (distance>radius+obst.size.x)
-    {
-      return new PVector(0, 0);
-    }
 
-    // If we get this far we are on a collision course and must steer away! 
-    // Use the sign of the dot product between the vector to center 
-    //(vecToCenter) and the      //   vector to the right (right) to
-    //determine whether to steer left or right
-    PVector desiredVelocity = new PVector(0, 0);
-    if (distance>0)
-    {
-      desiredVelocity = right.mult(-maxVelocity);
-    } else if (distance<0)
-    {
-      desiredVelocity = right.mult(maxVelocity);
-    }
-    steer=PVector.sub(desiredVelocity, velocity);
-    steer.mult(safeDistance/distance);
-  
-    //steer.mult(distance);
-    // For each case calculate desired velocity using the right vector
-    //and maxSpeed Compute the force required to change current velocity
-    //to desired velocity Consider multiplying this force by
-    //safeDistance/dist to increase the relative weight // 
-    //of the steering force when obstacles are closer.
-    if (debug)
-    {
-      stroke(0, 0, 255);
-      line(position.x, position.y, position.x+vectToCenter.x, position.y+vectToCenter.y);
-    }
-    return steer;
+
+   
   }
 }

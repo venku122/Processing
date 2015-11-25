@@ -1,43 +1,30 @@
 class Human extends Vehicle
 {
   //seeking target
-  //set to null for now
-  PVector target = null;
 
-  //PShape to draw this seeker object
-  PShape body;
+  PVector target = null;
 
   //overall steering force for this Seeker accumulates the steering forces
   //  of which this will be applied to the vehicle's acceleration
   PVector steeringForce;
 
+  //Target zombie
   Zombie z=null;
 
+  //Array of animation PImages
   PImage[] animation;
 
 
   //---------------------------------------
   //Constructor
-  //Seeker(x position, y position, radius, max speed, max force)
+  //Human(x position, y position, radius, max speed, max force, animation array)
   //---------------------------------------
   Human(float x, float y, float r, float ms, float mf, PImage[] animation)
   {
     super(x, y, r, ms, mf);
-    //call the super class' constructor and pass in necessary arguments
-
 
     //instantiate steeringForce vector to (0, 0)
     steeringForce= new PVector(0, 0);
-
-    //PShape initialization
-    //draw the seeker "pointing" toward 0 degrees
-    body = createShape();
-    body.beginShape();
-    body.vertex(radius*2, 0);
-    body.vertex(-radius*2, -radius);
-    body.vertex(-radius*2, radius);
-    body.endShape(CLOSE);
-    body.setFill(color(128, 128, 128));
     this.animation=animation;
   }
 
@@ -61,11 +48,12 @@ class Human extends Vehicle
     }
     if (z!=null)
     {
-      //PVector force = flee(new PVector(width/2, height/2));
+
       PVector force = evade(z, 10);
 
+      force.limit(maxForce);
       //add the above seeking force to this overall steering force
-      steeringForce.add(force);
+      steeringForce.add(force.mult(0.4));
       for (int i=0; i<obstacles.size(); i++)
       {
         steeringForce.add(avoidObstacle(obstacles.get(i), safeDistance));
@@ -81,9 +69,10 @@ class Human extends Vehicle
       steeringForce.mult(0);
     } else
     {
-      applyForce(wander(10, (int)radius));
+      //wander if no target to evade
+      applyForce(wander(10, (int)radius).mult(0.5));
     }
-    avoidBorder(100);
+    applyForce(avoidBorder(150).limit(maxForce));
   }
 
 
@@ -103,10 +92,13 @@ class Human extends Vehicle
     translate(position.x, position.y);
     rotate(angle);
     scale(.2);
+
+    //Slows down the animation speed
     int frame = (frameCount%40)/2;
     imageMode(CENTER);
     image(animation[frame], 0, 0);
     popMatrix();
+
     if (debug)
     {
       ellipse(position.x, position.y, radius, radius);
